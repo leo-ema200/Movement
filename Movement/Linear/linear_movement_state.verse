@@ -16,3 +16,4 @@ linear_movement_state := class<concrete>:
     var TurnDistanceTraveled : float = 0.0
 
     var ReverseDistanceTraveled : float = 0.0
+

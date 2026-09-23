@@ -1,4 +1,5 @@
 using { /Verse.org/SpatialMath }
+using { /Verse.org/Random }
 using {GameData.ScenarioData.Definitions}
 
 linear_movement<public> := class(movement_behavior):
@@ -54,9 +55,11 @@ linear_movement<public> := class(movement_behavior):
                 Configuration.MovementConstraint
             )
 
-            NextPosition :=CurrentPosition + CurrentDirection * DistanceToBoundary
+            TravelDistance := GenerateTravelDistance(DistanceToBoundary)
 
-            MoveTime := CalculateMoveTime(DistanceToBoundary, Configuration.Speed)
+            NextPosition :=CurrentPosition + CurrentDirection * TravelDistance
+
+            MoveTime := CalculateMoveTime(TravelDistance, Configuration.Speed)
 
             TargetObject.MoveTo(
                 TargetIndex,
@@ -69,3 +72,21 @@ linear_movement<public> := class(movement_behavior):
             set CurrentDirection = CurrentDirection * -1.0
 
              
+    GenerateTravelDistance(DistanceToBoundary : float) : float =
+
+        case(Configuration.DirectionChangeMode):
+
+            linear_direction_change_mode.BoundsOnly =>
+                DistanceToBoundary
+
+            linear_direction_change_mode.DistanceBased =>
+                DirectionChangeDistance :=
+                    GetRandomFloat(
+                        Configuration.MinDirectionChangeDistance,
+                        Configuration.MaxDirectionChangeDistance
+                    )
+
+                if(DirectionChangeDistance < DistanceToBoundary):
+                    DirectionChangeDistance
+                else:
+                    DistanceToBoundary
