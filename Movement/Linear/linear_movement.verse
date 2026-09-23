@@ -33,10 +33,6 @@ linear_movement<public> := class(movement_behavior):
         if(not IsValidLinearBoxRegion(Region)?):
             return
 
-        # Por ahora solamente probaremos movimiento 1D.
-        if(Configuration.MovementConstraint = movement_constraint.Plane2D):
-            return
-
         var CurrentPosition : vector3 = InitialPosition
 
         var CurrentDirection : vector3 =
@@ -69,8 +65,7 @@ linear_movement<public> := class(movement_behavior):
 
             set CurrentPosition = NextPosition
 
-            set CurrentDirection = CurrentDirection * -1.0
-
+            set CurrentDirection = GenerateNextDirection(CurrentPosition, CurrentDirection, Region, Configuration.MovementConstraint)
              
     GenerateTravelDistance(DistanceToBoundary : float) : float =
 

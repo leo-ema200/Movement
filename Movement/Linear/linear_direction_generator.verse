@@ -18,7 +18,7 @@ GenerateInitialDirection(Position : vector3, Region : linear_box_region, Constra
             )
 
         movement_constraint.Plane2D =>
-            GeneratePlane2DInitialDirection(
+            GeneratePlane2DDirection(
                 Position,
                 Region
             )
@@ -97,7 +97,7 @@ GenerateVerticalInitialDirection(Position : vector3, Region : linear_box_region)
             Forward := 0.0
         }
 
-GeneratePlane2DInitialDirection(Position : vector3, Region : linear_box_region) : vector3 =
+GeneratePlane2DDirection(Position : vector3, Region : linear_box_region) : vector3 =
 
     for(Attempt := 0..15):
 
@@ -148,3 +148,19 @@ GeneratePlane2DInitialDirection(Position : vector3, Region : linear_box_region) 
             Up := 0.0
             Forward := 0.0
         }
+
+
+GenerateNextDirection(Position : vector3, CurrentDirection : vector3, Region : linear_box_region, Constraint : movement_constraint) : vector3 =
+    case(Constraint):
+
+        movement_constraint.Horizontal =>
+            CurrentDirection * -1.0
+
+        movement_constraint.Vertical =>
+            CurrentDirection * -1.0
+
+        movement_constraint.Plane2D =>
+            GeneratePlane2DDirection(
+                Position,
+                Region
+            )
