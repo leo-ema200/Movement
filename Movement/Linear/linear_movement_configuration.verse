@@ -1,8 +1,7 @@
 
 linear_movement_configuration<public> :=class<concrete>(movement_configuration):
 
-        DirectionChangeMode<public> : linear_direction_change_mode =
-            linear_direction_change_mode.BoundsOnly
+        DirectionChangeMode<public> : linear_direction_change_mode = linear_direction_change_mode.BoundsOnly
 
         MinDirectionChangeDistance<public> : float = 500.0
         MaxDirectionChangeDistance<public> : float = 900.0
@@ -12,6 +11,3 @@ linear_movement_configuration<public> :=class<concrete>(movement_configuration):
 
         TurnDistance<public> : float = 200.0
 
-        ReverseMode<public> : linear_reverse_mode = linear_reverse_mode.Instant
-
-        ReverseDistance<public> : float = 150.0

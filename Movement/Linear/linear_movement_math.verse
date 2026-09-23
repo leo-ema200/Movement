@@ -89,23 +89,3 @@ GetDistanceToNextBoundary(Position : vector3, Direction : vector3, Region : line
                 UpDistance
 
 
-SoftReverseSegmentCount : float = 6.0
-
-SoftReverseDecelerationProfile : []float = array{
-    0.9564,
-    0.8647,
-    0.7618,
-    0.6422,
-    0.4928,
-    0.2041
-}
-
-
-SoftReverseAccelerationProfile : []float = array{
-    0.2041,
-    0.4928,
-    0.6422,
-    0.7618,
-    0.8647,
-    0.9564
-}

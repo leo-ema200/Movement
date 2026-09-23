@@ -54,112 +54,18 @@ linear_movement<public> := class(movement_behavior):
                 Configuration.MovementConstraint
             )
 
-            case(Configuration.ReverseMode):
-                linear_reverse_mode.Instant =>
-                    NextPosition :=CurrentPosition + CurrentDirection * DistanceToBoundary
+            NextPosition :=CurrentPosition + CurrentDirection * DistanceToBoundary
 
-                    MoveTime := CalculateMoveTime(DistanceToBoundary, Configuration.Speed)
+            MoveTime := CalculateMoveTime(DistanceToBoundary, Configuration.Speed)
 
-                    TargetObject.MoveTo(
-                        TargetIndex,
-                        NextPosition,
-                        MoveTime
-                    )
-
-                    set CurrentPosition = NextPosition
-
-                    set CurrentDirection = CurrentDirection * -1.0
-
-                linear_reverse_mode.Soft =>
-                    EffectiveReverseDistance := if(Configuration.ReverseDistance < DistanceToBoundary) then Configuration.ReverseDistance else DistanceToBoundary
-
-                    StraightDistance := DistanceToBoundary - EffectiveReverseDistance
-
-                    # Primero viajamos normalmente hasta llegar
-                    # al punto donde debe comenzar la desaceleración.
-
-                    if(StraightDistance > DirectionEpsilon):
-                        ReverseStartPosition := CurrentPosition + CurrentDirection * StraightDistance
-
-                        MoveTime :=CalculateMoveTime(StraightDistance, Configuration.Speed)
-
-                         TargetObject.MoveTo(
-                            TargetIndex,
-                            ReverseStartPosition,
-                            MoveTime
-                        )
-
-                        set CurrentPosition = ReverseStartPosition
-
-                        # Ahora ejecutamos la reversión suave.
-                        if(EffectiveReverseDistance > DirectionEpsilon):
-
-                            NewPosition :=
-                                RunSoftReverse(
-                                    TargetObject,
-                                    TargetIndex,
-                                    CurrentPosition,
-                                    CurrentDirection,
-                                    EffectiveReverseDistance
-                                )
-
-                            set CurrentPosition = NewPosition
-
-                            set CurrentDirection = CurrentDirection * -1.0
-
-
-
-    RunMovementSpeedProfile(TargetObject : target, TargetIndex : int, StartPosition : vector3, Direction : vector3, TravelDistance : float, Speed : float, SpeedProfile : []float)<suspends> : vector3 =
-
-        SegmentDistance := TravelDistance / SoftReverseSegmentCount
-
-        var CurrentPosition : vector3 = StartPosition
-
-        for(SpeedRatio : SpeedProfile):
-
-            SegmentSpeed := Speed * SpeedRatio
-
-            NextPosition := CurrentPosition + Direction * SegmentDistance
-
-            MoveTime :=CalculateMoveTime( SegmentDistance, SegmentSpeed)
-
-            TargetObject.MoveTo(TargetIndex, NextPosition, MoveTime)
+            TargetObject.MoveTo(
+                TargetIndex,
+                NextPosition,
+                MoveTime
+            )
 
             set CurrentPosition = NextPosition
 
-        CurrentPosition
+            set CurrentDirection = CurrentDirection * -1.0
 
-    RunSoftReverse(TargetObject : target, TargetIndex : int, StartPosition : vector3, CurrentDirection : vector3, ReverseDistance : float)<suspends> : vector3 =
-        # Primera mitad:
-        # seguimos avanzando hacia el boundary,
-        # pero desacelerando.
-
-        BoundaryPosition :=
-            RunMovementSpeedProfile(
-                TargetObject,
-                TargetIndex,
-                StartPosition,
-                CurrentDirection,
-                ReverseDistance,
-                Configuration.Speed,
-                SoftReverseDecelerationProfile
-            )
-
-        ReversedDirection := CurrentDirection * -1.0
-
-        # Segunda mitad:
-        # nos alejamos del boundary mientras
-        # recuperamos nuestra velocidad normal.
-
-        FinalPosition :=
-            RunMovementSpeedProfile(
-                TargetObject,
-                TargetIndex,
-                BoundaryPosition,
-                ReversedDirection,
-                ReverseDistance,
-                Configuration.Speed,
-                SoftReverseAccelerationProfile
-            )
-
-        FinalPosition
+             
