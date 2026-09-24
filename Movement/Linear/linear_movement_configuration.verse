@@ -1,6 +1,6 @@
 
 
-linear_movement_configuration<public> := class<abstract>(movement_configuration):
+linear_movement_configuration<public> := class(movement_configuration):
         
         Speed<override> : float = 600.0
         EdgePadding<override> : float = 50.0
