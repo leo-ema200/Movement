@@ -2,7 +2,11 @@ linear_direction_change_mode<public> := enum:
     BoundsOnly
     DistanceBased
 
-linear_movement_phase := enum:
-    Straight
-    Turning
-    Reversing
+linear_manual_selection_mode<public> := enum:
+    Ordered
+    Random
+
+linear_boundary_response<public> := enum:
+    ChangeDirection
+    ReverseAndComplete
+    Random

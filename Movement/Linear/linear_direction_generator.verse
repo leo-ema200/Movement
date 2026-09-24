@@ -164,3 +164,84 @@ GenerateNextDirection(Position : vector3, CurrentDirection : vector3, Region : l
                 Position,
                 Region
             )
+
+########### Manual
+GenerateManualDirection(Position : vector3, Region : linear_box_region, InclinationDegrees : float) : vector3 =
+
+    ClampedInclination := ClampManualInclinationDegrees(InclinationDegrees)
+
+    # 0° = Horizontal.
+    if(ClampedInclination <= DirectionEpsilon):
+        return vector3{
+            Left := GenerateManualLeftSign(Position, Region)
+            Up := 0.0
+            Forward := 0.0
+        }
+
+    # 90° = Vertical.
+    if(ClampedInclination >= 90.0 - DirectionEpsilon):
+        return vector3{
+            Left := 0.0
+            Up := GenerateManualUpSign(Position, Region)
+            Forward := 0.0
+        }
+
+    AngleRadians := DegreesToRadians(ClampedInclination)
+
+    LeftMagnitude := Cos(AngleRadians)
+    UpMagnitude := Sin(AngleRadians)
+
+    vector3{
+        Left := LeftMagnitude * GenerateManualLeftSign(Position, Region)
+        Up := UpMagnitude * GenerateManualUpSign(Position, Region)
+        Forward := 0.0
+    }
+
+ClampManualInclinationDegrees(InclinationDegrees : float) : float =
+
+    if(InclinationDegrees < 0.0):
+        0.0
+
+    else if(InclinationDegrees > 90.0):
+        90.0
+
+    else:
+        InclinationDegrees
+
+GenerateManualLeftSign(Position : vector3, Region : linear_box_region) : float =
+
+    # Estamos en el limite positivo de Left.
+    # Solo podemos movernos hacia dentro.
+    if(Position.Left >= Region.LeftMax - DirectionEpsilon):
+        return -1.0
+
+    # Estamos en el limite negativo de Left.
+    # Solo podemos movernos hacia dentro.
+    if(Position.Left <= Region.LeftMin + DirectionEpsilon):
+        return 1.0
+
+    # Si estamos dentro del bounds,
+    # cualquier sentido horizontal es valido.
+    if(GetRandomFloat(0.0, 1.0) < 0.5):
+        1.0
+    else:
+        -1.0
+
+GenerateManualUpSign(Position : vector3, Region : linear_box_region) : float =
+
+    # Estamos en el limite superior.
+    # Solo podemos movernos hacia dentro.
+    if(Position.Up >= Region.UpMax - DirectionEpsilon):
+        return -1.0
+
+    # Estamos en el limite inferior.
+    # Solo podemos movernos hacia dentro.
+    if(Position.Up <= Region.UpMin + DirectionEpsilon):
+        return 1.0
+
+    # Si estamos dentro del bounds,
+    # cualquier sentido vertical es valido.
+    if(GetRandomFloat(0.0, 1.0) < 0.5):
+        1.0
+    else:
+        -1.0
