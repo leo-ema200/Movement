@@ -12,10 +12,14 @@ waypoint_traversal<public> := enum:
     Random
 
 waypoint_configuration<public> := class<concrete>(movement_configuration):
-    @editable
+    # 0.01+ cm/s; runtime still rejects nonfinite/nonpositive values.
+    @editable_number(float):
+        MinValue := option{0.01}
     Speed<override> : float = 600.0
 
-    @editable
+    # 0+ cm; must also fit the selected bounds at runtime.
+    @editable_number(float):
+        MinValue := option{0.0}
     EdgePadding<override> : float = 50.0
 
     # ViewPlane: Left/Up, preserve starting Forward.
@@ -24,6 +28,7 @@ waypoint_configuration<public> := class<concrete>(movement_configuration):
     Space<public> : waypoint_space = waypoint_space.ViewPlane
 
     # Coordinates in [-1, 1] relative to the padded box. Inactive axes are ignored.
+    # UEFN has no per-element vector range attribute on []vector3; validated at runtime.
     @editable
     Points<public> : []vector3 = array{
         vector3{Left := -0.8, Up := -0.5, Forward := -0.6},
@@ -40,9 +45,12 @@ waypoint_configuration<public> := class<concrete>(movement_configuration):
     RandomStart<public> : logic = true
 
     # Per-visit variation, as a fraction of each active axis's usable half-extent.
-    @editable
+    @editable_number(float):
+        MinValue := option{0.0}
+        MaxValue := option{1.0}
     JitterFraction<public> : float = 0.08
 
     # Reject shorter route legs instead of sending tiny MoveTo calls. Units: cm.
-    @editable
+    @editable_number(float):
+        MinValue := option{1.0}
     MinLegDistance<public> : float = 50.0

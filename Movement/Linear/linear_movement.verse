@@ -7,6 +7,8 @@ linear_movement<public> := class(movement_behavior):
     Configuration<public> : linear_movement_configuration = linear_automatic_configuration{}
 
     Run<override>(TargetObject : target, TargetIndex : int, Bounds : target_spawn_bounds)<suspends> : void =
+        if(not ValidateMovementConfiguration[Configuration]):
+            return
         # Linear V1 actualmente trabaja con Box Bounds.
         if:
             BoxBounds := target_spawn_box_bounds[Bounds]

@@ -1,8 +1,16 @@
 
 
+using { /Verse.org/Simulation }
+
 linear_movement_configuration<public> := class(movement_configuration):
         
+        # Positive cm/s; values from code are checked again by Run.
+        @editable_number(float):
+                MinValue := option{0.01}
         Speed<override> : float = 600.0
+        # Nonnegative cm; must also leave a usable Box.
+        @editable_number(float):
+                MinValue := option{0.0}
         EdgePadding<override> : float = 50.0
 
         MinSegmentDistance<public> : float = 500.0
